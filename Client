@@ -1,0 +1,41 @@
+package socketthreadmulti;
+
+import java.io.*;
+import java.net.*;
+import java.util.Scanner;
+
+public class Client{
+    public static void main(String[] args) throws IOException{
+        try{
+            Scanner scn = new Scanner(System.in);
+            InetAddress ip = InetAddress.getByName("localhost");
+            Socket s = new Socket(ip, 5056);
+            DataInputStream dis = new DataInputStream(s.getInputStream());
+            DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+            String st = "";
+            while (!st.equals("stop")){
+                st = dis.readUTF();
+                char[] ch = st.toCharArray();
+                char[] ch_comp = ch;
+                for (int i = 0; i < ch.length; i++) {
+                    switch(ch[i]){
+                        case 'T': ch_comp[i] = 'A'; break;
+                        case 'A': ch_comp[i] = 'T'; break;
+                        case 'G': ch_comp[i] = 'C'; break;
+                        case 'C': ch_comp[i] = 'G'; break;
+                    }
+                }
+                String comp = new String(ch_comp);
+                dos.writeUTF(comp);              
+            }
+            System.out.println("Closing this connection : " + s);
+            s.close();
+            System.out.println("Connection closed");
+            scn.close();
+            dis.close();
+            dos.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+}
